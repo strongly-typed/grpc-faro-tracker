@@ -9,6 +9,7 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import me.nicholasnadeau.faroion.FaroIonServiceGrpc.FaroIonServiceImplBase;
 import smx.tracker.TrackerException;
+import smx.tracker.NoTargetException;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -153,9 +154,11 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
 
     @Override
     public void search(DoubleValue request, StreamObserver<Empty> responseObserver) {
-        LOGGER.info("Searching for target");
+        LOGGER.info("Searching for target in radius: " + request.getValue());
         try {
             this.faroIon.search(request.getValue());
+        } catch (NoTargetException e) {
+            LOGGER.info("No target found");
         } catch (TrackerException e) {
             LOGGER.severe(e.getText());
             this.close();
