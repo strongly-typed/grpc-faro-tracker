@@ -99,6 +99,21 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
 
 
     @Override
+    public void moveSpherical(SphericalPosition request, StreamObserver<Empty> responseObserver) {
+        LOGGER.info("Move Spherical to:\n" + request);
+        try {
+            this.faroIon.moveSpherical(new double[]{request.getAzimuth(), request.getZenith(), request.getDistance()});
+        } catch (TrackerException e) {
+            LOGGER.severe(e.getText());
+            this.close();
+        }
+
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
+    }
+
+
+    @Override
     public void moveHome(Empty request, StreamObserver<Empty> responseObserver) {
         LOGGER.info("Moving home");
         try {
