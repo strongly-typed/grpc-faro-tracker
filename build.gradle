@@ -1,9 +1,10 @@
 import java.nio.file.Paths
 
 plugins {
-    id "com.google.protobuf" version "0.8.3"
+    id "com.google.protobuf" version "0.9.3"
     id "java"
     id "idea"
+    id "application"
 }
 
 group 'me.nicholasnadeau'
@@ -16,30 +17,32 @@ repositories {
 }
 
 // define gRPC version
-def GRPC_VERSION = '1.9.0'
+def GRPC_VERSION = '1.45.0'
 
 dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-math3
-    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 
     // https://mvnrepository.com/artifact/io.grpc/grpc-netty
-    compile group: 'io.grpc', name: 'grpc-netty', version: GRPC_VERSION
+    implementation group: 'io.grpc', name: 'grpc-netty', version: GRPC_VERSION
 
     // https://mvnrepository.com/artifact/io.grpc/grpc-protobuf
-    compile group: 'io.grpc', name: 'grpc-protobuf', version: GRPC_VERSION
+    implementation group: 'io.grpc', name: 'grpc-protobuf', version: GRPC_VERSION
 
     // https://mvnrepository.com/artifact/io.grpc/grpc-stub
-    compile group: 'io.grpc', name: 'grpc-stub', version: GRPC_VERSION
+    implementation group: 'io.grpc', name: 'grpc-stub', version: GRPC_VERSION
+
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
     // FARO lib
-    compile fileTree(dir: 'faro-lib', include: '*.jar')
+    implementation fileTree(dir: 'faro-lib', include: '*.jar')
 }
 
 // compile proto
 protobuf {
     protoc {
         // https://mvnrepository.com/artifact/com.google.protobuf/protoc
-        artifact = 'com.google.protobuf:protoc:3.5.1-1'
+        artifact = 'com.google.protobuf:protoc:3.19.4'
     }
 
     //noinspection GroovyAssignabilityCheck
@@ -70,4 +73,8 @@ sourceSets {
 clean {
     //noinspection GroovyAssignabilityCheck
     delete protobuf.generatedFilesBaseDir
+}
+
+application {
+    mainClass = 'me.nicholasnadeau.faroion.RunService'
 }
