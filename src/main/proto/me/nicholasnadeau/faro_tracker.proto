@@ -58,6 +58,7 @@ message SphericalPosition {
 
 message Measure {
     CartesianPosition position = 1;
-    double temperature = 2;
-    bool is_success = 3;
+    double rms = 2;
+    double temperature = 3;
+    bool is_success = 4;
 }

@@ -211,6 +211,7 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
             // build message
             measure = Measure.newBuilder()
                     .setPosition(cartesianBuilder.build())
+                    .setRms(0.0)
                     .setTemperature(temperature)
                     .setIsSuccess(success)
                     .build();
