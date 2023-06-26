@@ -25,7 +25,7 @@ service FaroTrackerService {
     rpc MoveHome (google.protobuf.Empty) returns (google.protobuf.Empty) {
     }
 
-    rpc Search (google.protobuf.DoubleValue) returns (google.protobuf.Empty) {
+    rpc Search (google.protobuf.DoubleValue) returns (google.protobuf.BoolValue) {
     }
 
     rpc MeasurePoint (google.protobuf.Empty) returns (Measure) {

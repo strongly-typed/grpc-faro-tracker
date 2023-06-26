@@ -168,10 +168,12 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
     }
 
     @Override
-    public void search(DoubleValue request, StreamObserver<Empty> responseObserver) {
+    public void search(DoubleValue request, StreamObserver<BoolValue> responseObserver) {
+        boolean targetDetected = false;
         LOGGER.info("Searching for target in radius: " + request.getValue());
         try {
             this.faroTracker.search(request.getValue());
+            targetDetected = this.faroTracker.isTargetDetected();
         } catch (NoTargetException e) {
             LOGGER.info("No target found");
         } catch (TrackerException e) {
@@ -179,7 +181,8 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
             this.close();
         }
 
-        responseObserver.onNext(Empty.getDefaultInstance());
+        LOGGER.info("Target found: " + targetDetected);
+        responseObserver.onNext(BoolValue.newBuilder().setValue(targetDetected).build());
         responseObserver.onCompleted();
     }
 
