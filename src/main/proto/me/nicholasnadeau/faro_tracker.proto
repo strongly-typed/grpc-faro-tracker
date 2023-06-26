@@ -1,15 +1,15 @@
 syntax = "proto3";
-package faroion;
+package farotracker;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
 option java_multiple_files = true;
-option java_package = "me.nicholasnadeau.faroion";
-option java_outer_classname = "FaroIonProto";
+option java_package = "me.nicholasnadeau.farotracker";
+option java_outer_classname = "FaroTrackerProto";
 
 // define service
-service FaroIonService {
+service FaroTrackerService {
     rpc MoveCartesian (CartesianPosition) returns (google.protobuf.Empty) {
     }
 

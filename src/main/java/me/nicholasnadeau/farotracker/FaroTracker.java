@@ -1,4 +1,4 @@
-package me.nicholasnadeau.faroion;
+package me.nicholasnadeau.farotracker;
 
 import org.apache.commons.math3.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -9,13 +9,13 @@ import java.util.logging.Logger;
 /**
  * Created by nicholas on 2016-03-31.
  */
-public class FaroIon {
+public class FaroTracker {
 
     private static final String DEFAULT_IP = "192.168.0.2";
     private static final String USERNAME = "user";
     private static final String PASSWORD = "";
     private final Tracker tracker;
-    private static final Logger LOGGER = Logger.getLogger(FaroIon.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(FaroTracker.class.getName());
 
 
     /**
@@ -23,7 +23,7 @@ public class FaroIon {
      *
      * @throws TrackerException
      */
-    FaroIon() throws TrackerException {
+    FaroTracker() throws TrackerException {
         this(new TrackerKeystone());
     }
 
@@ -34,8 +34,8 @@ public class FaroIon {
      * @param trackerInterface
      * @throws TrackerException
      */
-    private FaroIon(TrackerInterface trackerInterface) throws TrackerException {
-        this.tracker = new Tracker(trackerInterface);
+    private FaroTracker(TrackerInterface trackerInterface) throws TrackerException {
+        this.tracker = new Tracker(DEFAULT_IP);
         this.setBlocking(true);
     }
 

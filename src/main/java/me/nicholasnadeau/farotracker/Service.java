@@ -1,4 +1,4 @@
-package me.nicholasnadeau.faroion;
+package me.nicholasnadeau.farotracker;
 
 
 import com.google.protobuf.BoolValue;
@@ -7,7 +7,7 @@ import com.google.protobuf.Empty;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-import me.nicholasnadeau.faroion.FaroIonServiceGrpc.FaroIonServiceImplBase;
+import me.nicholasnadeau.farotracker.FaroTrackerServiceGrpc.FaroTrackerServiceImplBase;
 import smx.tracker.TrackerException;
 import smx.tracker.NoTargetException;
 
@@ -15,18 +15,18 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
+class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable {
     private static final Logger LOGGER = Logger.getLogger(Service.class.getName());
     private static final int DEFAULT_PORT = 30000;
-    private FaroIon faroIon;
+    private FaroTracker faroTracker;
     private Server server;
 
     Service() throws TrackerException {
-        this(new FaroIon(), DEFAULT_PORT);
+        this(new FaroTracker(), DEFAULT_PORT);
     }
 
-    private Service(FaroIon faroIon, int port) {
-        this.faroIon = faroIon;
+    private Service(FaroTracker faroTracker, int port) {
+        this.faroTracker = faroTracker;
         server = ServerBuilder.forPort(port).addService(this).build();
     }
 
@@ -34,7 +34,7 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
         LOGGER.info("Closing FARO service");
         this.server.shutdown();
         try {
-            this.faroIon.disconnect();
+            this.faroTracker.disconnect();
         } catch (TrackerException e) {
             LOGGER.severe(e.getText());
         }
@@ -64,8 +64,8 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
 
     private void connectFaro() throws TrackerException {
         LOGGER.info("Connecting to FARO");
-        this.faroIon.setBlocking(true);
-        this.faroIon.connect();
+        this.faroTracker.setBlocking(true);
+        this.faroTracker.connect();
     }
 
     private void startGrpcServer() throws IOException {
@@ -87,7 +87,7 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
     public void moveCartesian(CartesianPosition request, StreamObserver<Empty> responseObserver) {
         LOGGER.info("Move Cartesian to:\n" + request);
         try {
-            this.faroIon.moveCartesian(new double[]{request.getX(), request.getY(), request.getZ()});
+            this.faroTracker.moveCartesian(new double[]{request.getX(), request.getY(), request.getZ()});
         } catch (TrackerException e) {
             LOGGER.severe(e.getText());
             this.close();
@@ -102,7 +102,7 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
     public void moveSpherical(SphericalPosition request, StreamObserver<Empty> responseObserver) {
         LOGGER.info("Move Spherical to:\n" + request);
         try {
-            this.faroIon.moveSpherical(new double[]{request.getAzimuth(), request.getZenith(), request.getDistance()});
+            this.faroTracker.moveSpherical(new double[]{request.getAzimuth(), request.getZenith(), request.getDistance()});
         } catch (TrackerException e) {
             LOGGER.severe(e.getText());
             this.close();
@@ -117,7 +117,7 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
     public void moveHome(Empty request, StreamObserver<Empty> responseObserver) {
         LOGGER.info("Moving home");
         try {
-            this.faroIon.home();
+            this.faroTracker.home();
         } catch (TrackerException e) {
             LOGGER.severe(e.getText());
             this.close();
@@ -130,12 +130,12 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
     public void initialize(Empty request, StreamObserver<Empty> responseObserver) {
         LOGGER.info("Initializing FARO");
         try {
-            if (this.faroIon.isInitialized()) {
+            if (this.faroTracker.isInitialized()) {
                 LOGGER.info("Tracker already initialized");
             } else {
-                this.faroIon.initialize();
+                this.faroTracker.initialize();
                 LOGGER.info("Setting home");
-                this.faroIon.home();
+                this.faroTracker.home();
             }
         } catch (TrackerException e) {
             LOGGER.severe(e.getText());
@@ -152,7 +152,7 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
 
         for (int i = 0; i < 2; i++) {
             try {
-                targetDetected = this.faroIon.isTargetDetected();
+                targetDetected = this.faroTracker.isTargetDetected();
                 if (targetDetected) {
                     break;
                 }
@@ -171,7 +171,7 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
     public void search(DoubleValue request, StreamObserver<Empty> responseObserver) {
         LOGGER.info("Searching for target in radius: " + request.getValue());
         try {
-            this.faroIon.search(request.getValue());
+            this.faroTracker.search(request.getValue());
         } catch (NoTargetException e) {
             LOGGER.info("No target found");
         } catch (TrackerException e) {
@@ -188,8 +188,8 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
         Measure measure = Measure.getDefaultInstance();
         try {
             // get position
-            double[] doubles = this.faroIon.measurePoint();
-            doubles = this.faroIon.sphericalToCartesian(doubles);
+            double[] doubles = this.faroTracker.measurePoint();
+            doubles = this.faroTracker.sphericalToCartesian(doubles);
             CartesianPosition.Builder cartesianBuilder = CartesianPosition.newBuilder();
             cartesianBuilder
                     .setX(doubles[0])
@@ -197,7 +197,7 @@ class Service extends FaroIonServiceImplBase implements Runnable, Closeable {
                     .setZ(doubles[2]);
 
             // get temperature
-            double temperature = this.faroIon.getExtTemperature();
+            double temperature = this.faroTracker.getExtTemperature();
 
             // build message
             measure = Measure.newBuilder()

@@ -1,4 +1,4 @@
-package me.nicholasnadeau.faroion;
+package me.nicholasnadeau.farotracker;
 
 import smx.tracker.TrackerException;
 

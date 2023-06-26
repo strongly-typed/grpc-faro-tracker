@@ -76,5 +76,5 @@ clean {
 }
 
 application {
-    mainClass = 'me.nicholasnadeau.faroion.RunService'
+    mainClass = 'me.nicholasnadeau.farotracker.RunService'
 }
