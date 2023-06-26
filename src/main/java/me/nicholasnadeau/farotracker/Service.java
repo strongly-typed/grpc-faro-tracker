@@ -11,6 +11,7 @@ import me.nicholasnadeau.farotracker.FaroTrackerServiceGrpc.FaroTrackerServiceIm
 import smx.tracker.TrackerException;
 import smx.tracker.NoTargetException;
 
+import java.lang.Math;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -188,6 +189,7 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
 
     @Override
     public void measurePoint(Empty request, StreamObserver<Measure> responseObserver) {
+        boolean success = false;
         Measure measure = Measure.getDefaultInstance();
         try {
             // get position
@@ -199,6 +201,10 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
                     .setY(doubles[1])
                     .setZ(doubles[2]);
 
+            if ((Math.abs(doubles[0]) > 0.001) && (Math.abs(doubles[1]) > 0.001) && (Math.abs(doubles[2]) > 0.001)) {
+                success = true;
+            }
+
             // get temperature
             double temperature = this.faroTracker.getExtTemperature();
 
@@ -206,7 +212,7 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
             measure = Measure.newBuilder()
                     .setPosition(cartesianBuilder.build())
                     .setTemperature(temperature)
-                    .setIsSuccess(true)
+                    .setIsSuccess(success)
                     .build();
         } catch (TrackerException e) {
             LOGGER.severe(e.getText());
