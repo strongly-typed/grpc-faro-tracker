@@ -45,6 +45,9 @@ service FaroTrackerService {
 
     rpc IsTargetDetected (google.protobuf.Empty) returns (google.protobuf.BoolValue) {
     }
+
+    rpc ChangeLedState (LedState) returns (google.protobuf.Empty) {
+    }
 }
 
 message CartesianPosition {
@@ -71,4 +74,23 @@ message Level {
     double Ry = 2;
     double Rz = 3;
     bool is_success = 4;
+}
+
+message LedState {
+    Led led = 1;
+    LedBlink ledBlink = 2;
+}
+
+enum Led {
+    ORANGE = 0;
+    BLUE = 1;
+    BOTH = 2;
+}
+
+enum LedBlink {
+    OFF = 0;
+    ON = 1;
+    SLOW = 2;
+    NORMAL = 3;
+    FAST = 4;
 }

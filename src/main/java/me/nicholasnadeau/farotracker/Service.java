@@ -243,4 +243,18 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
         );
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void changeLedState(LedState request, StreamObserver<Empty> responseObserver) {
+        LOGGER.info("Set Led State to " + request.getLedValue() + " " + request.getLedBlinkValue());
+        try {
+            this.faroTracker.changeLedState(request.getLedValue(), request.getLedBlinkValue());
+        } catch (TrackerException e) {
+            LOGGER.severe(e.getText());
+            this.close();
+        }
+
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
+    }
 }

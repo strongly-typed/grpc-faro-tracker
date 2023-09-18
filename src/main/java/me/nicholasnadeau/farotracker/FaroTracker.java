@@ -196,6 +196,10 @@ public class FaroTracker {
         return result;
     }
 
+    void changeLedState(int arg0, int arg1) throws TrackerException {
+        this.getTracker().changeLedState(arg0, arg1);
+    }
+
     private boolean isConnected() {
         try {
             return this.getTracker().connected();
