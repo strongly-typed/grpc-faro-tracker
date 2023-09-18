@@ -2,6 +2,7 @@
 **/build/
 bin/
 !src/**/build/
+src/test/*pb2*.py
 
 # Ignore Gradle GUI config
 gradle-app.setting
