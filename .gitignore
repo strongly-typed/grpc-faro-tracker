@@ -17,3 +17,6 @@ gradle-app.setting
 
 # ignoring 3rd party JARs
 faro-lib/*.jar
+
+# Ignore Gradle build output directory
+build
