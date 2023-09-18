@@ -98,7 +98,6 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
         responseObserver.onCompleted();
     }
 
-
     @Override
     public void moveSpherical(SphericalPosition request, StreamObserver<Empty> responseObserver) {
         LOGGER.info("Move Spherical to:\n" + request);
@@ -112,7 +111,6 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
-
 
     @Override
     public void moveHome(Empty request, StreamObserver<Empty> responseObserver) {
@@ -221,6 +219,28 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
         }
 
         responseObserver.onNext(measure);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void measureLevel(Empty request, StreamObserver<Level> responseObserver) {
+        double level[] = {0.0, 0.0, 0.0};
+        LOGGER.info("Measuring level");
+        try {
+            level = this.faroTracker.measureLevel();
+        } catch (TrackerException e) {
+            LOGGER.severe(e.getText());
+            this.close();
+        }
+        LOGGER.info("Level measured: " + level[0] + " " + level[1] + " " + level[2]);
+
+        responseObserver.onNext(Level.newBuilder()
+                .setRx(level[0])
+                .setRy(level[1])
+                .setRz(level[2])
+                .setIsSuccess(true)
+                .build()
+        );
         responseObserver.onCompleted();
     }
 }

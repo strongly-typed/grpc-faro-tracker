@@ -31,6 +31,9 @@ service FaroTrackerService {
     rpc MeasurePoint (google.protobuf.Empty) returns (Measure) {
     }
 
+    rpc MeasureLevel (google.protobuf.Empty) returns (Level) {
+    }
+
     rpc Start (google.protobuf.Empty) returns (google.protobuf.Empty) {
     }
 
@@ -60,5 +63,12 @@ message Measure {
     CartesianPosition position = 1;
     double rms = 2;
     double temperature = 3;
+    bool is_success = 4;
+}
+
+message Level {
+    double Rx = 1;
+    double Ry = 2;
+    double Rz = 3;
     bool is_success = 4;
 }

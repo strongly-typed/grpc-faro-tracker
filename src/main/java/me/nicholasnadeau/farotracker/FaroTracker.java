@@ -187,6 +187,15 @@ public class FaroTracker {
         return result;
     }
 
+    double[] measureLevel() throws TrackerException {
+        LevelData res = this.getTracker().measureLevel();
+        double[] result = new double[]{
+            res.getRX(), res.getRY(), res.getRZ()
+        };
+
+        return result;
+    }
+
     private boolean isConnected() {
         try {
             return this.getTracker().connected();
