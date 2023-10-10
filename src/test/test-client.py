@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 
 # Generate proto
 # python3 -m venv .venv
@@ -38,11 +39,19 @@ def run_simple():
         if response.is_success:
             print(f'{response.Rx:12.10f} {response.Ry:12.10f} {response.Rz:12.10f}')
 
-        trk_stub.MoveHome(empty_pb2.Empty());
+        trk_stub.MoveHome(empty_pb2.Empty())
 
-        trk_stub.ChangeLedState(
-            faro_tracker_pb2.LedState(led = faro_tracker_pb2.Led.BLUE, ledBlink = faro_tracker_pb2.LedBlink.OFF)
-        )
+        while True:
+            ret = trk_stub.IsTargetDetected(empty_pb2.Empty())
+            print(ret.value)
+            if ret.value:
+                trk_stub.ChangeLedState(faro_tracker_pb2.LedState(led = faro_tracker_pb2.Led.ORANGE, ledBlink = faro_tracker_pb2.LedBlink.ON))
+                trk_stub.ChangeLedState(faro_tracker_pb2.LedState(led = faro_tracker_pb2.Led.BLUE,   ledBlink = faro_tracker_pb2.LedBlink.OFF))
+            else:
+                trk_stub.ChangeLedState(faro_tracker_pb2.LedState(led = faro_tracker_pb2.Led.ORANGE, ledBlink = faro_tracker_pb2.LedBlink.OFF))
+                trk_stub.ChangeLedState(faro_tracker_pb2.LedState(led = faro_tracker_pb2.Led.BLUE,   ledBlink = faro_tracker_pb2.LedBlink.ON))
+
+            sleep(0.1)
 
 
 if __name__ == '__main__':
