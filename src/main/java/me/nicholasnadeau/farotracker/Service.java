@@ -192,6 +192,12 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
         try {
             // get position
             double[] doubles = this.faroTracker.measurePoint();
+            SphericalPosition.Builder spBuilder = SphericalPosition.newBuilder();
+            spBuilder
+                .setAzimuth(doubles[0])
+                .setZenith(doubles[1])
+                .setDistance(doubles[2]);
+
             doubles = this.faroTracker.sphericalToCartesian(doubles);
             CartesianPosition.Builder cartesianBuilder = CartesianPosition.newBuilder();
             cartesianBuilder
@@ -208,7 +214,8 @@ class Service extends FaroTrackerServiceImplBase implements Runnable, Closeable 
 
             // build message
             measure = Measure.newBuilder()
-                    .setPosition(cartesianBuilder.build())
+                    .setSphericalPosition(spBuilder.build())
+                    .setCartesianPosition(cartesianBuilder.build())
                     .setRms(0.0)
                     .setTemperature(temperature)
                     .setIsSuccess(success)

@@ -37,13 +37,21 @@ def run_simple():
         response = trk_stub.MeasureLevel(faro_tracker_pb2.google_dot_protobuf_dot_empty__pb2.Empty())
 
         if response.is_success:
-
-        trk_stub.MoveHome(empty_pb2.Empty())
             print(f'{response.Rx:22.20f} {response.Ry:22.20f} {response.Rz:12.10f}')
 
         while True:
             ret = trk_stub.IsTargetDetected(empty_pb2.Empty())
             print(ret.value)
+
+            response = trk_stub.MeasurePoint(empty_pb2.Empty())
+            if response.is_success:
+                print(f'azimuth  : {response.sphericalPosition.azimuth:>23.20f}')
+                print(f'zenith   : {response.sphericalPosition.zenith:>23.20f}')
+                print(f'distance : {response.sphericalPosition.distance:>23.20f}')
+                print(f'x        : {response.cartesianPosition.x:>13.10f}')
+                print(f'y        : {response.cartesianPosition.y:>13.10f}')
+                print(f'z        : {response.cartesianPosition.z:>13.10f}')
+
             if ret.value:
                 trk_stub.ChangeLedState(faro_tracker_pb2.LedState(led = faro_tracker_pb2.Led.ORANGE, ledBlink = faro_tracker_pb2.LedBlink.ON))
                 trk_stub.ChangeLedState(faro_tracker_pb2.LedState(led = faro_tracker_pb2.Led.BLUE,   ledBlink = faro_tracker_pb2.LedBlink.OFF))
