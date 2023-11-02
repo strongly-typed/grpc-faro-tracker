@@ -37,9 +37,9 @@ def run_simple():
         response = trk_stub.MeasureLevel(faro_tracker_pb2.google_dot_protobuf_dot_empty__pb2.Empty())
 
         if response.is_success:
-            print(f'{response.Rx:12.10f} {response.Ry:12.10f} {response.Rz:12.10f}')
 
         trk_stub.MoveHome(empty_pb2.Empty())
+            print(f'{response.Rx:22.20f} {response.Ry:22.20f} {response.Rz:12.10f}')
 
         while True:
             ret = trk_stub.IsTargetDetected(empty_pb2.Empty())
